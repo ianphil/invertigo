@@ -1,0 +1,31 @@
+### Search for text similar to AI and vector search
+POST http://localhost:5085/api/Search
+Content-Type: application/json
+
+{
+  "query": "Tell me about AI and vector search",
+  "topK": 3,
+  "nProbes": 10,
+  "cosineWeight": 0.8,
+  "metadataWeight": 0.2
+}
+
+### Search for text related to vector databases
+POST http://localhost:5085/api/Search
+Content-Type: application/json
+
+{
+  "query": "How do vector databases work?",
+  "topK": 2,
+  "nProbes": 5
+}
+
+### Search with tag filter
+POST http://localhost:5085/api/Search
+Content-Type: application/json
+
+{
+  "query": "inverted file indexing",
+  "topK": 5,
+  "tagFilter": "technology"
+}

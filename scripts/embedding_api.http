@@ -1,0 +1,23 @@
+### Generate embedding for sample text 1
+POST http://localhost:5085/api/Embedding
+Content-Type: application/json
+
+{
+  "text": "This is a sample text that will be converted to an embedding vector. It's about artificial intelligence and vector search."
+}
+
+### Generate embedding for sample text 2
+POST http://localhost:5085/api/Embedding
+Content-Type: application/json
+
+{
+  "text": "Vector databases enable efficient similarity search. They are critical for modern AI applications."
+}
+
+### Generate embedding for sample text 3
+POST http://localhost:5085/api/Embedding
+Content-Type: application/json
+
+{
+  "text": "Invertigo is a vector search engine that uses inverted file indexing for fast retrieval."
+}

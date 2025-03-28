@@ -79,7 +79,7 @@ Swagger UI is enabled in development mode to help you explore and test the API:
 
 #### Using curl
 ```bash
-curl -X POST "https://localhost:7142/api/search" \
+curl -X POST "https://localhost:5085/api/search" \
      -H "Content-Type: application/json" \
      -d '{
            "query": "How to connect to Azure SQL?",
@@ -91,20 +91,27 @@ curl -X POST "https://localhost:7142/api/search" \
          }'
 ```
 
-#### Using PowerShell
-```powershell
-$body = @{
-    query = "How to connect to Azure SQL?"
-    topK = 5
-    nProbes = 10
-    tagFilter = "azure"
-    cosineWeight = 0.8
-    metadataWeight = 0.2
-} | ConvertTo-Json
+#### Using REST Client
+We've included HTTP files in the scripts folder that you can use with the REST Client VS Code extension:
 
-Invoke-RestMethod -Method Post -Uri "https://localhost:7142/api/search" `
-                  -ContentType "application/json" -Body $body
+```http
+### Search for text similar to AI and vector search
+POST http://localhost:5085/api/Search
+Content-Type: application/json
+
+{
+  "query": "Tell me about AI and vector search",
+  "topK": 3,
+  "nProbes": 10,
+  "cosineWeight": 0.8,
+  "metadataWeight": 0.2
+}
 ```
+
+To use these files:
+1. Install the "REST Client" extension in VS Code
+2. Open the `scripts/search_api.http` file
+3. Click on "Send Request" above any request to execute it
 
 #### Request Parameters
 | Parameter | Type | Description |
@@ -148,21 +155,30 @@ Generate vector embeddings for text without searching the index.
 
 #### Using curl
 ```bash
-curl -X POST "https://localhost:7142/api/embedding" \
+curl -X POST "https://localhost:5085/api/embedding" \
      -H "Content-Type: application/json" \
      -d '{
            "text": "This is the text I want to convert to an embedding vector"
          }'
 ```
 
-#### Using PowerShell
-```powershell
-$body = @{
-    text = "This is the text I want to convert to an embedding vector"
-} | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri "https://localhost:7142/api/embedding" `
-                  -ContentType "application/json" -Body $body
+#### Using REST Client
+We've included HTTP files in the scripts folder for testing with the REST Client VS Code extension:
+
+```http
+### Generate embedding for sample text
+POST http://localhost:5085/api/Embedding
+Content-Type: application/json
+
+{
+  "text": "This is a sample text that will be converted to an embedding vector. It's about artificial intelligence and vector search."
+}
 ```
+
+To use these files:
+1. Install the "REST Client" extension in VS Code
+2. Open the `scripts/embedding_api.http` file
+3. Click on "Send Request" above any request to execute it
 
 #### Request Parameters
 | Parameter | Type | Description |

@@ -75,7 +75,9 @@ Swagger UI is enabled in development mode to help you explore and test the API:
 
 ## 🔍 Making API Requests
 
-### Using curl
+### Search API
+
+#### Using curl
 ```bash
 curl -X POST "https://localhost:7142/api/search" \
      -H "Content-Type: application/json" \
@@ -89,7 +91,7 @@ curl -X POST "https://localhost:7142/api/search" \
          }'
 ```
 
-### Using PowerShell
+#### Using PowerShell
 ```powershell
 $body = @{
     query = "How to connect to Azure SQL?"
@@ -104,7 +106,7 @@ Invoke-RestMethod -Method Post -Uri "https://localhost:7142/api/search" `
                   -ContentType "application/json" -Body $body
 ```
 
-### Request Parameters
+#### Request Parameters
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | query | string | The text to search for |
@@ -114,7 +116,7 @@ Invoke-RestMethod -Method Post -Uri "https://localhost:7142/api/search" `
 | cosineWeight | float | Weight for vector similarity (0.0-1.0) |
 | metadataWeight | float | Weight for metadata scoring (0.0-1.0) |
 
-### Response Format
+#### Response Format
 ```json
 [
   {
@@ -139,6 +141,56 @@ Invoke-RestMethod -Method Post -Uri "https://localhost:7142/api/search" `
   }
 ]
 ```
+
+### Embedding API
+
+Generate vector embeddings for text without searching the index.
+
+#### Using curl
+```bash
+curl -X POST "https://localhost:7142/api/embedding" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "text": "This is the text I want to convert to an embedding vector"
+         }'
+```
+
+#### Using PowerShell
+```powershell
+$body = @{
+    text = "This is the text I want to convert to an embedding vector"
+} | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "https://localhost:7142/api/embedding" `
+                  -ContentType "application/json" -Body $body
+```
+
+#### Request Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| text | string | The text to convert to an embedding vector |
+
+#### Response Format
+```json
+{
+  "embedding": [
+    0.0023403291,
+    -0.009303299,
+    0.008032652,
+    ...
+    0.022048818,
+    -0.023478487
+  ],
+  "dimensions": 1536,
+  "tokenCount": null
+}
+```
+
+#### Response Properties
+| Property | Type | Description |
+|----------|------|-------------|
+| embedding | array | The embedding vector as an array of floats |
+| dimensions | integer | The dimensionality of the embedding vector |
+| tokenCount | integer | Token count (if available, currently null) |
 
 ## 🧪 Running Tests
 ```bash

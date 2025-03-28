@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build VectorSearch.Api",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/VectorSearch.Api/VectorSearch.Api.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

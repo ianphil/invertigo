@@ -1,6 +1,7 @@
 using Azure;
 using Azure.AI.OpenAI;
 using System.Numerics;
+using Microsoft.Extensions.Logging;
 
 namespace VectorSearch.Core;
 
@@ -11,6 +12,7 @@ public class OpenAiEmbeddingService : IEmbeddingService
 {
     private readonly OpenAIClient _client;
     private readonly string _deploymentName;
+    private readonly ILogger<OpenAiEmbeddingService>? _logger;
 
     /// <summary>
     /// Creates a new OpenAiEmbeddingService using environment variables for configuration
@@ -52,6 +54,38 @@ public class OpenAiEmbeddingService : IEmbeddingService
         _deploymentName = deploymentName;
     }
 
+    /// <summary>
+    /// Creates a new OpenAiEmbeddingService with explicit configuration
+    /// </summary>
+    /// <param name="apiKey">The API key for OpenAI</param>
+    /// <param name="endpoint">Optional endpoint for Azure OpenAI</param>
+    /// <param name="deploymentName">Name of the embedding deployment to use</param>
+    /// <param name="logger">Optional logger</param>
+    public OpenAiEmbeddingService(string apiKey, string? endpoint, string deploymentName, ILogger<OpenAiEmbeddingService>? logger = null)
+    {
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            throw new ArgumentException("API key cannot be empty", nameof(apiKey));
+        }
+
+        _deploymentName = deploymentName ?? "text-embedding-3-small";
+        _logger = logger;
+
+        // Initialize client based on whether we're using Azure OpenAI or OpenAI.com
+        if (!string.IsNullOrEmpty(endpoint))
+        {
+            // Using Azure OpenAI
+            _logger?.LogInformation("Initializing Azure OpenAI client with endpoint: {Endpoint}", endpoint);
+            _client = new OpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
+        }
+        else
+        {
+            // Using OpenAI.com
+            _logger?.LogInformation("Initializing OpenAI.com client");
+            _client = new OpenAIClient(apiKey);
+        }
+    }
+
     /// <inheritdoc />
     public async Task<float[]> GetEmbeddingAsync(string text)
     {
@@ -60,16 +94,28 @@ public class OpenAiEmbeddingService : IEmbeddingService
             throw new ArgumentException("Text to embed cannot be empty", nameof(text));
         }
 
-        // Make API call to get embeddings
-        EmbeddingsOptions options = new EmbeddingsOptions(_deploymentName, new List<string> { text });
-        Response<Embeddings> response = await _client.GetEmbeddingsAsync(options);
+        _logger?.LogDebug("Getting embedding for text (length: {Length})", text.Length);
         
-        // Get the embedding data and convert from ReadOnlyMemory<float> to float[]
-        ReadOnlyMemory<float> embeddingMemory = response.Value.Data[0].Embedding;
-        float[] embeddingArray = embeddingMemory.ToArray();
-        
-        // Normalize the vector
-        return NormalizeVector(embeddingArray);
+        try
+        {
+            // Make API call to get embeddings
+            EmbeddingsOptions options = new EmbeddingsOptions(_deploymentName, new List<string> { text });
+            Response<Embeddings> response = await _client.GetEmbeddingsAsync(options);
+            
+            // Get the embedding data and convert from ReadOnlyMemory<float> to float[]
+            ReadOnlyMemory<float> embeddingMemory = response.Value.Data[0].Embedding;
+            float[] embeddingArray = embeddingMemory.ToArray();
+            
+            _logger?.LogDebug("Embedding obtained with {Dimensions} dimensions", embeddingArray.Length);
+            
+            // Normalize the vector
+            return NormalizeVector(embeddingArray);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error getting embedding from OpenAI");
+            throw;
+        }
     }
 
     /// <summary>

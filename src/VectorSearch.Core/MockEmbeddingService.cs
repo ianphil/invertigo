@@ -11,6 +11,14 @@ public class MockEmbeddingService : IEmbeddingService
     private readonly bool _normalize;
 
     /// <summary>
+    /// Creates a mock embedding service that returns random 4-dimensional embeddings
+    /// Suitable for testing scenarios
+    /// </summary>
+    public MockEmbeddingService() : this(4, true, 42)
+    {
+    }
+
+    /// <summary>
     /// Creates a mock embedding service that returns a fixed embedding
     /// </summary>
     /// <param name="fixedEmbedding">The fixed embedding to return for all queries</param>

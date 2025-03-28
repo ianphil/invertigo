@@ -20,9 +20,9 @@ Invertigo 🚀 flips the script on vector search! Cluster your data into centroi
    You can either:
    - Set environment variables:
      ```bash
-     export OpenAI__ApiKey="your-api-key"
-     export OpenAI__Endpoint="https://your-azure-endpoint" # Optional for Azure OpenAI
-     export OpenAI__DeploymentName="text-embedding-3-small" # Default is text-embedding-3-small
+     export OPENAI_API_KEY="your-api-key"
+     export OPENAI_ENDPOINT="https://your-azure-endpoint" # Optional for Azure OpenAI
+     export OPENAI_EMBEDDING_DEPLOYMENT="text-embedding-3-small" # Default is text-embedding-3-small
      ```
    
    - Or update `appsettings.json`:

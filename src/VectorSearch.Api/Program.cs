@@ -59,7 +59,16 @@ public class Program
             {
                 logger.LogInformation("Loading vector index from {IndexPath}", indexPath);
                 var index = IndexLoader.LoadIndex(indexPath);
-                logger.LogInformation("Successfully loaded index with {ClusterCount} clusters", index.Clusters.Count);
+                
+                if (index.Clusters.Count == 0)
+                {
+                    logger.LogWarning("Loaded an empty index. The search functionality will be limited until an index is built.");
+                }
+                else
+                {
+                    logger.LogInformation("Successfully loaded index with {ClusterCount} clusters", index.Clusters.Count);
+                }
+                
                 return index;
             }
             catch (Exception ex)
@@ -67,6 +76,13 @@ public class Program
                 logger.LogError(ex, "Failed to load vector index from {IndexPath}", indexPath);
                 throw;
             }
+        });
+
+        // Register IndexManager for persistence operations
+        services.AddSingleton(provider =>
+        {
+            var logger = provider.GetRequiredService<ILogger<IndexManager>>();
+            return new IndexManager(indexPath, logger);
         });
 
         // Register IVFSearchEngine

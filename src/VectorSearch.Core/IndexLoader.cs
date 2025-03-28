@@ -20,7 +20,8 @@ public class IndexLoader
     {
         if (!File.Exists(filePath))
         {
-            throw new FileNotFoundException($"Index file not found at path: {filePath}");
+            Console.WriteLine($"Warning: Index file not found at path: {filePath}. Creating empty index.");
+            return CreateEmptyIndex();
         }
 
         try
@@ -32,5 +33,20 @@ public class IndexLoader
         {
             throw new InvalidOperationException($"Failed to deserialize index file: {ex.Message}", ex);
         }
+    }
+    
+    /// <summary>
+    /// Creates an empty InvertedIndex
+    /// </summary>
+    /// <returns>A new empty InvertedIndex</returns>
+    public static InvertedIndex CreateEmptyIndex()
+    {
+        return new InvertedIndex
+        {
+            VectorDimension = 0,
+            CentroidCount = 0,
+            FlattenedCentroids = Array.Empty<float>(),
+            Clusters = new()
+        };
     }
 }

@@ -54,6 +54,13 @@ public class IVFSearchEngine
             throw new ArgumentException("Query embedding cannot be null or empty", nameof(queryEmbedding));
         }
         
+        // Check if the index is empty
+        if (_index.VectorDimension == 0 || _index.CentroidCount == 0 || _index.Clusters.Count == 0)
+        {
+            Console.WriteLine("Warning: Attempted to search with an empty index. Returning empty result set.");
+            return new List<SearchResult>();
+        }
+        
         if (queryEmbedding.Length != _index.VectorDimension)
         {
             throw new ArgumentException(

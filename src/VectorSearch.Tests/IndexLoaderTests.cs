@@ -85,14 +85,20 @@ public class IndexLoaderTests : IDisposable
     }
 
     [Fact]
-    public void LoadIndex_FileNotFound_ThrowsFileNotFoundException()
+    public void LoadIndex_FileNotFound_CreatesEmptyIndex()
     {
         // Arrange
         string nonExistentFilePath = Path.Combine(Path.GetTempPath(), "non_existent_file.pb");
-
-        // Act & Assert
-        var exception = Assert.Throws<FileNotFoundException>(() => IndexLoader.LoadIndex(nonExistentFilePath));
-        Assert.Contains("Index file not found", exception.Message);
+        
+        // Act 
+        var result = IndexLoader.LoadIndex(nonExistentFilePath);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(0, result.VectorDimension);
+        Assert.Equal(0, result.CentroidCount);
+        Assert.Empty(result.FlattenedCentroids);
+        Assert.Empty(result.Clusters);
     }
 
     [Fact]

@@ -19,4 +19,14 @@ public class EmbeddingResponse
     /// Optional token count information
     /// </summary>
     public int? TokenCount { get; set; }
+    
+    /// <summary>
+    /// The ID of the vector item in the index (null if not persisted)
+    /// </summary>
+    public string? Id { get; set; }
+    
+    /// <summary>
+    /// Whether the embedding was persisted to the index
+    /// </summary>
+    public bool Persisted { get; set; }
 }

@@ -399,3 +399,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 src/VectorSearch.Api/appsettings.json
+src/VectorSearch.Api/index.pb
